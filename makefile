@@ -1,6 +1,7 @@
 APP = toplevel
 
 UTs=$(wildcard ut/*.c)
+UUTs=$(wildcard uut/*.c)
 
 SRC=test_toplevel.c \
 $(FW) \
@@ -8,14 +9,16 @@ $(UTs)
 LIB=./fw/utf.a
 
 INC=-I ./ut \
--I ./fw
+-I ./fw \
+-I ./uut
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(SRC:.c=.o) \
+$(UUTs:.c=.o)
 
 CFLAGS= $(LIBINC) $(INC)
 CC=gcc
 
-all: utf $(APP)
+all: clean utf $(APP)
 	./$(APP)
 
 debug: $(APP)

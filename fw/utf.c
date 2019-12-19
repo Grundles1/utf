@@ -20,7 +20,7 @@ suite_t* make_suite(name_t name){
 }
 
 test_case_t* make_test_case(name_t name, test_result_t (*test)(void)){
-	printf("\tMaking test case %s\n", name);
+	printf("\t\tMaking test case %s\n", name);
 	test_case_t ret = {
 		.name = make_name(name),
 		.test = test
@@ -29,7 +29,7 @@ test_case_t* make_test_case(name_t name, test_result_t (*test)(void)){
 }
 
 void add_test(suite_t *suite, test_case_t *test_case){
-	printf("\tAdding test case %s to suite %s\n", suite->name, test_case->name);
+	printf("\tAdding test case %s to suite %s\n", test_case->name, suite->name);
 	test_cases_t updated_test_cases_list = {
 		.test = test_case,
 		.next_test = suite->test_cases
@@ -42,32 +42,35 @@ void add_test(suite_t *suite, test_case_t *test_case){
 test_results_t* run_test(test_cases_t *test_cases){
 	test_results_t ret = {
 		.result = INVALID,
-		.next_result = NULL
+		.next_result = NULL,
+		.name = NULL
 	};
 	if (test_cases == NULL) {
-		printf("Reached the end of the test list\n");
-		return_allocated(test_results_t, ret);
+		printf("Test cases loaded, starting test execution.\n");
+		// return_allocated(test_results_t, ret);
+		return NULL;
 	}
-	else if (test_cases->test->test == NULL) {
+	ret.name = test_cases->test->name;
+	if (test_cases->test->test == NULL) {
 		printf("\tTest case not associated with a test function\n");
 		ret.result = INVALID;
 		ret.next_result = NULL;
 	}
 	test_results_t *next_res = run_test(test_cases->next_test);
-	printf("Running test case %s\n", test_cases->test->name);
+	printf("\tRunning test case %s\n", test_cases->test->name);
 	switch (monitor_assertions(test_cases->test->test)){
 		case PASSED:
-			printf("\tTest passed\n");
+			printf("\t\tTest passed\n");
 			ret.result = PASSED;
 			ret.next_result = next_res;
 			break;
 		case INVALID:
-			printf("\tTest invalid\n");
+			printf("\t\tTest invalid\n");
 			ret.result = INVALID;
 			ret.next_result = next_res;
 			break;
 		case FAILED:
-			printf("\tTest failed\n");
+			printf("\t\tTest failed\n");
 			ret.result = FAILED;
 			ret.next_result = next_res;
 			break;
@@ -76,7 +79,7 @@ test_results_t* run_test(test_cases_t *test_cases){
 }
 
 test_results_t* run_tests(suite_t *suite){
-	printf("\tRunning test suite %s.\n", suite->name);
+	printf("Running test suite %s.\n", suite->name);
 	return run_test(suite->test_cases);
 }
 
@@ -87,17 +90,41 @@ test_result_t monitor_assertions(test_result_t (*test)(void)){
 		return assertion_state;
 	}
 	else {
-		printf("Test result does not agree with assertion status\n");
+		printf("\t\tWarning: Test result does not agree with assertion status\n");
 		return INVALID;
 	}
 }
 
 void assert(bool assertion){
-	if (assertion) {
-		if (assertion_state != FAILED)
+	if (assertion && assertion_state != FAILED){
 			assertion_state = PASSED;
 	}
 	else {
 		assertion_state = FAILED;
+	}
+}
+
+void print_result(test_result_t result){
+	switch (result){
+		case PASSED:
+			printf(" PASSED\n");
+			break;
+		case FAILED:
+			printf(" FAILED\n");
+			break;
+		case INVALID:
+			printf(" INVALID\n");
+			break;
+	}
+}
+
+void print_results(test_results_t *results){
+	if (results != NULL){
+		printf("%s:", results->name);
+		print_result(results->result);
+		if (results->next_result != NULL) {
+			// printf("%s:", results->name);
+			print_results(results->next_result);
+		}
 	}
 }
