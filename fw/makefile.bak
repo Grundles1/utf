@@ -1,0 +1,31 @@
+APP = utf
+LIB = utf.a
+
+SRC = utf.c
+OBJ = $(SRC:.c=.o)
+CC=gcc
+WARNFLAGS= \
+-Weverything \
+-Werror \
+-Wno-shadow \
+-Wno-infinite-recursion \
+-Wno-padded  
+CFLAGS= -g $(WARNFLAGS)
+
+all: $(LIB)
+
+$(LIB): $(OBJ)
+	ar rcs $@ $^ >> build.log
+
+# debug: $(APP)
+# 	lldb ./utf
+
+# profile: all
+# 	gprof $(APP)
+
+clean: 
+	-@rm -rf $(APP) build.log 2>/dev/null
+	-@find . -name *.o -delete 2>/dev/null
+
+
+
