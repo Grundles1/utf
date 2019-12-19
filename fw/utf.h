@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 // The maximum allowable length for a name is 32 characters
 #define MAX_NAME_LEN (25 + 7)
 
@@ -54,3 +56,6 @@ void add_test(suite_t*, test_case_t*);
 test_results_t* run_test(test_cases_t*);
 test_results_t* run_tests(suite_t*);
 name_t make_name (name_t);
+test_result_t monitor_assertions(test_result_t (*test)(void));
+extern test_result_t assertion_state;
+void assert(bool);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "utf.h"
 
 name_t make_name (name_t name){
@@ -54,7 +55,7 @@ test_results_t* run_test(test_cases_t *test_cases){
 	}
 	test_results_t *next_res = run_test(test_cases->next_test);
 	printf("Running test case %s\n", test_cases->test->name);
-	switch (test_cases->test->test()){
+	switch (monitor_assertions(test_cases->test->test)){
 		case PASSED:
 			printf("\tTest passed\n");
 			ret.result = PASSED;
@@ -77,4 +78,26 @@ test_results_t* run_test(test_cases_t *test_cases){
 test_results_t* run_tests(suite_t *suite){
 	printf("\tRunning test suite %s.\n", suite->name);
 	return run_test(suite->test_cases);
+}
+
+test_result_t assertion_state = INVALID;
+test_result_t monitor_assertions(test_result_t (*test)(void)){
+	assertion_state = INVALID;
+	if (test()==assertion_state){
+		return assertion_state;
+	}
+	else {
+		printf("Test result does not agree with assertion status\n");
+		return INVALID;
+	}
+}
+
+void assert(bool assertion){
+	if (assertion) {
+		if (assertion_state != FAILED)
+			assertion_state = PASSED;
+	}
+	else {
+		assertion_state = FAILED;
+	}
 }

@@ -7,13 +7,12 @@ $(FW) \
 $(UTs)
 LIB=./fw/utf.a
 
-LIBINC=-L ./fw
 INC=-I ./ut \
 -I ./fw
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS= $(LIBINC) $(INC) --verbose
+CFLAGS= $(LIBINC) $(INC)
 CC=gcc
 
 all: utf $(APP)
