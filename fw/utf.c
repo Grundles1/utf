@@ -54,22 +54,23 @@ test_results_t* run_test(test_cases_t *test_cases){
 	}
 	test_results_t *next_res = run_test(test_cases->next_test);
 	printf("Running test case %s\n", test_cases->test->name);
-	if (test_cases->test->test() == PASSED) {
-		printf("\tTest passed\n");
-		ret.result = PASSED;
-		ret.next_result = next_res;
+	switch (test_cases->test->test()){
+		case PASSED:
+			printf("\tTest passed\n");
+			ret.result = PASSED;
+			ret.next_result = next_res;
+			break;
+		case INVALID:
+			printf("\tTest invalid\n");
+			ret.result = INVALID;
+			ret.next_result = next_res;
+			break;
+		case FAILED:
+			printf("\tTest failed\n");
+			ret.result = FAILED;
+			ret.next_result = next_res;
+			break;
 	}
-	else if (test_cases->test->test() == INVALID) {
-		printf("\tTest invalid\n");
-		ret.result = INVALID;
-		ret.next_result = next_res;
-	}
-	else {
-		printf("\tTest failed\n");
-		ret.result = FAILED;
-		ret.next_result = next_res;
-	}
-
 	return_allocated(test_results_t, ret);
 }
 

@@ -5,25 +5,24 @@ UTs=$(wildcard ut/*.c)
 SRC=test_toplevel.c \
 $(FW) \
 $(UTs)
-LIB=utf.a
+LIB=./fw/utf.a
 
-LIBINC=-L fw
+LIBINC=-L ./fw
 INC=-I ./ut \
 -I ./fw
 
-OBJ = $(LIB) \
-$(SRC:.c=.o)
+OBJ = $(SRC:.c=.o)
 
-CFLAGS= $(INC)
+CFLAGS= $(LIBINC) $(INC) --verbose
 CC=gcc
 
-all: $(APP)
+all: utf $(APP)
 	./$(APP)
 
 debug: $(APP)
 	lldb ./$(APP)
 
-utf.a:
+utf:
 	make -f fw/makefile
 
 $(UTs):
@@ -32,7 +31,7 @@ $(UTs):
 # profile: all
 # 	gprof $(APP)
 
-$(APP): utf.a $(OBJ)
+$(APP): $(OBJ)
 	gcc $(CFLAGS) $(LIB) $^ -o $@ >> build.log
 
 coverage: all

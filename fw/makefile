@@ -1,7 +1,8 @@
 APP = utf
-LIB = utf.a
+LIB = $(CURR_DIR)/utf.a
+CURR_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-SRC = utf.c
+SRC =$(CURR_DIR)/utf.c
 OBJ = $(SRC:.c=.o)
 CC=gcc
 WARNFLAGS= \
@@ -16,12 +17,6 @@ all: $(LIB)
 
 $(LIB): $(OBJ)
 	ar rcs $@ $^ >> build.log
-
-# debug: $(APP)
-# 	lldb ./utf
-
-# profile: all
-# 	gprof $(APP)
 
 clean: 
 	-@rm -rf $(APP) build.log 2>/dev/null

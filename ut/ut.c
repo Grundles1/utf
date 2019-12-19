@@ -12,3 +12,7 @@ test_result_t t2(void){
 test_result_t t3(void){
 	return INVALID;
 }
+
+test_result_t t4(void){
+	return -1;
+}
