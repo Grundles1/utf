@@ -20,7 +20,7 @@ suite_t* make_suite(name_t name){
 }
 
 test_case_t* make_test_case(name_t name, test_result_t (*test)(void)){
-	printf("\t\tMaking test case %s\n", name);
+	printf("\tMaking test case %s\n", name);
 	test_case_t ret = {
 		.name = make_name(name),
 		.test = test
@@ -120,11 +120,30 @@ void print_result(test_result_t result){
 
 void print_results(test_results_t *results){
 	if (results != NULL){
+		if (results->next_result != NULL)
+			print_results(results->next_result);
 		printf("%s:", results->name);
 		print_result(results->result);
-		if (results->next_result != NULL) {
-			// printf("%s:", results->name);
-			print_results(results->next_result);
-		}
+	}
+}
+
+void print_totals(test_results_t *results, int passed, int failed, int invalid){
+	if (results == NULL){
+		printf("Totals:\n\n");
+		printf("INVALID:\t%d\n", invalid);
+		printf("PASSED:\t\t%d\n", passed);
+		printf("FAILED:\t\t%d\n", failed);
+		return;
+	}
+	switch(results->result){
+		case PASSED:
+			print_totals(results->next_result, passed+1, failed, invalid);
+			break;
+		case FAILED:
+			print_totals(results->next_result, passed, failed+1, invalid);
+			break;
+		case INVALID:
+			print_totals(results->next_result, passed, failed, invalid+1);
+			break;
 	}
 }

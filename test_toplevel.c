@@ -38,6 +38,7 @@ int main(void)
 	test_results_t *results = run_tests(suite);
 	printf("Printing the results\n");
 	print_results(results);
+	print_totals(results,0,0,0);
 	printf("Made suite.\n");
 	return 0;
 }

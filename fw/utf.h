@@ -64,4 +64,5 @@ extern test_result_t assertion_state;
 void assert(bool);
 void print_result(test_result_t);
 void print_results(test_results_t *);
+void print_totals(test_results_t *, int, int, int);
 #endif
