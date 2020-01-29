@@ -1,48 +1,38 @@
-APP = toplevel
+EXE = utf
 
-UTs=$(wildcard ut/*.c)
-UUTs=$(wildcard uut/*.c)
-
-SRC=test_toplevel.c \
-$(FW) \
-$(UTs)
-LIB=./fw/utf.a
-
-INC=-I ./ut \
--I ./fw \
--I ./uut
-
-OBJ = $(SRC:.c=.o) \
-$(UUTs:.c=.o)
-
-CFLAGS= $(LIBINC) $(INC)
+SRC = utf.c \
+ut.c \
+test_toplevel.c
+OBJ = $(SRC:.c=.o)
 CC=gcc
+WARNFLAGS= \
+-Weverything \
+-Werror \
+-Wno-shadow \
+-Wno-infinite-recursion \
+-Wno-padded  
+CFLAGS= -g $(WARNFLAGS)
 
-all: clean utf $(APP)
-	./$(APP)
+all: $(EXE)
+	./utf
 
-debug: $(APP)
-	lldb ./$(APP)
-
-utf:
-	make -f fw/makefile
-
-$(UTs):
-	make -f ut/makefile
+debug: $(EXE)
+	lldb ./utf
 
 # profile: all
-# 	gprof $(APP)
+# 	gprof $(EXE)
 
-$(APP): $(OBJ)
-	gcc $(CFLAGS) $(LIB) $^ -o $@ >> build.log
+%.o: %.c
+	$(CC) $(CFLAGS) $< -o $@ -c 2>&1 >> build.log
 
 coverage: all
 	gcov -b .
 
 clean: 
-	-@rm -rf $(APP) build.log 2>/dev/null
-	-@find . -name *.o -delete 2>/dev/null
-	-@find . -name *.a -delete 2>/dev/null
+	rm -rf $(EXE) build.log *.o *.dSYM
 
+$(EXE): $(OBJ)
+	gcc $(CFLAGS) $^ -o $@ >> build.log
+	
 
 

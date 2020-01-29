@@ -1,7 +1,3 @@
-#ifndef UTF_F
-#define UTF_F
-#include <stdbool.h>
-
 // The maximum allowable length for a name is 32 characters
 #define MAX_NAME_LEN (25 + 7)
 
@@ -25,7 +21,6 @@ typedef enum {
 // A linked list of test results
 typedef struct test_results_s {
 	test_result_t result;
-	char* name;
 	struct test_results_s *next_result;
 } test_results_t;
 
@@ -59,10 +54,3 @@ void add_test(suite_t*, test_case_t*);
 test_results_t* run_test(test_cases_t*);
 test_results_t* run_tests(suite_t*);
 name_t make_name (name_t);
-test_result_t monitor_assertions(test_result_t (*test)(void));
-extern test_result_t assertion_state;
-void assert(bool);
-void print_result(test_result_t);
-void print_results(test_results_t *);
-void print_totals(test_results_t *, int, int, int);
-#endif
